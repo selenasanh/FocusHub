@@ -1,0 +1,343 @@
+/* ========================================
+   MOBILE RESPONSIVE DESIGN
+   Media Queries for screens < 768px
+   ======================================== */
+
+@media (max-width: 768px) {
+
+    /* Global adjustments */
+    body {
+        font-size: 14px;
+    }
+
+    .app-container {
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    /* Header - Stack navigation vertically */
+    .main-header {
+        flex-direction: column;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .main-header h1 {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    .view-selector {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .nav-btn {
+        font-size: 0.85rem;
+        padding: 10px 8px;
+    }
+
+    /* Main content - Remove side padding */
+    #main-content {
+        padding: 15px;
+    }
+
+    /* Glass cards - Reduce padding */
+    .glass-card {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    /* Dashboard Layout - Stack vertically */
+    .dashboard-layout {
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+    }
+
+    /* Calendar - Make it full width */
+    .calendar-widget {
+        width: 100%;
+    }
+
+    .compact-calendar-grid {
+        gap: 4px;
+    }
+
+    .calendar-day {
+        min-height: 45px;
+        font-size: 0.75rem;
+    }
+
+    .day-number {
+        font-size: 0.85rem;
+    }
+
+    .month-event-item {
+        font-size: 0.65rem;
+        padding: 2px 4px;
+    }
+
+    /* Pomodoro - Smaller */
+    .pomodoro-widget {
+        padding: 15px;
+    }
+
+    #pomodoro-timer {
+        font-size: 2rem;
+    }
+
+    .pomodoro-controls button {
+        padding: 8px 15px;
+        font-size: 0.85rem;
+    }
+
+    /* Notes - Stack items */
+    .note-item {
+        padding: 12px;
+    }
+
+    .note-item h4 {
+        font-size: 1rem;
+    }
+
+    /* Weekly View - Stack days vertically */
+    .weekly-layout {
+        grid-template-columns: 1fr !important;
+    }
+
+    #week-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px;
+    }
+
+    .day-column {
+        min-height: auto;
+    }
+
+    /* Hourly grid - Make scrollable horizontally */
+    #hourly-grid {
+        grid-template-columns: 60px repeat(7, 120px) !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Habits table - Horizontal scroll */
+    .habits-table {
+        font-size: 0.75rem;
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .habits-table th,
+    .habits-table td {
+        padding: 8px 6px;
+        min-width: 40px;
+    }
+
+    .habit-name-cell {
+        position: sticky;
+        left: 0;
+        background: rgba(15, 15, 35, 0.95);
+        z-index: 2;
+        min-width: 120px !important;
+    }
+
+    /* SOP Layout - Stack vertically */
+    .sop-layout {
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+    }
+
+    .sop-card {
+        padding: 15px;
+    }
+
+    /* Recipe cards - Single column */
+    .recipes-grid {
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+    }
+
+    .recipe-card {
+        padding: 15px;
+    }
+
+    /* Analytics - Stack charts */
+    .analytics-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .chart-container svg {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Expenses - Stack layout */
+    .expenses-layout {
+        grid-template-columns: 1fr !important;
+    }
+
+    .expense-stats {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 12px;
+    }
+
+    .stat-value {
+        font-size: 1.3rem;
+    }
+
+    /* Tables - Horizontal scroll */
+    .data-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        font-size: 0.75rem;
+        min-width: 600px;
+    }
+
+    table th,
+    table td {
+        padding: 8px 6px;
+    }
+
+    /* Modals - Full screen on mobile */
+    .modal-overlay {
+        padding: 0;
+        align-items: flex-start;
+    }
+
+    .modal-content,
+    .note-modal-content,
+    .habit-modal-content,
+    .recipe-modal-content,
+    .analytics-modal-content,
+    .category-modal-content,
+    .expense-edit-modal-content {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        position: sticky;
+        top: 0;
+        background: rgba(15, 15, 35, 0.98);
+        z-index: 10;
+        padding: 15px;
+    }
+
+    .modal-body {
+        padding: 15px;
+    }
+
+    /* Recipe modal - Stack columns */
+    .recipe-modal-columns {
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+    }
+
+    /* Form inputs - Full width */
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px;
+        /* Prevents zoom on iOS */
+    }
+
+    /* Buttons - Larger touch targets */
+    button,
+    .btn,
+    .action-btn {
+        min-height: 44px;
+        padding: 10px 15px;
+    }
+
+    .icon-btn,
+    .mini-icon-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    /* Charts - Responsive sizing */
+    #weight-chart,
+    #hormone-chart,
+    #expense-pie-chart,
+    #payment-pie-chart {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Hide unnecessary elements on mobile */
+    .desktop-only {
+        display: none !important;
+    }
+
+    /* Pie chart legends - Stack vertically */
+    .pie-legend {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Progress bars - Full width */
+    .progress-bar-container {
+        width: 100%;
+    }
+
+    /* Search bars - Full width */
+    .search-bar {
+        width: 100% !important;
+        margin-bottom: 15px;
+    }
+
+    /* Category badges - Smaller */
+    .category-badge {
+        font-size: 0.7rem;
+        padding: 3px 8px;
+    }
+
+    /* Payment badges - Smaller */
+    .payment-badge {
+        font-size: 0.7rem;
+        padding: 3px 8px;
+    }
+}
+
+/* Extra small devices (phones in portrait, < 480px) */
+@media (max-width: 480px) {
+    .main-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .nav-btn {
+        font-size: 0.75rem;
+        padding: 8px 6px;
+    }
+
+    .glass-card {
+        padding: 12px;
+    }
+
+    #pomodoro-timer {
+        font-size: 1.5rem;
+    }
+
+    .expense-stats {
+        grid-template-columns: 1fr !important;
+    }
+
+    table {
+        font-size: 0.7rem;
+    }
+}
