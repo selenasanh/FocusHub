@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
+
+    <!-- Apple iOS PWA Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FocusHub">
+    <link rel="apple-touch-icon" href="icon.svg">
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="main-header">
+            <h1>FocusHub</h1>
+            <nav class="view-selector">
+                <button class="nav-btn active" data-view="dashboard">🏠 Inicio</button>
+                <button class="nav-btn" data-view="weekly">📅 Agenda</button>
+                <button class="nav-btn" data-view="expenses">💰 Gastos</button>
+                <button class="nav-btn" data-view="sop">🌸 SOP</button>
+            </nav>
+        </header>
+
+        <main id="main-content">
+            <!-- SOP VIEW -->
+            <div id="sop-view" class="view-container hidden">
+                <div class="sop-layout">
+                    <div class="sop-card glass-card">
+                        <div class="sop-content glass-card card-full-height">
+                            <div class="section-header-inline"
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <h2 style="margin: 0; font-size: 1.5rem;">🍳 Recetas Saludables</h2>
+                                <div class="header-actions" style="display: flex; gap: 12px; align-items: center;">
+                                    <input type="text" id="recipe-search" placeholder="🔍 Buscar receta..."
+                                        class="search-input-pill">
+                                    <button id="add-recipe-btn" class="premium-add-btn">
+                                        <span class="btn-icon">✨</span>
+                                        <span class="btn-text">Nueva Receta</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="recetas-container" class="scrollable-recipe-list"></div>
+                        </div>
+                    </div>
+                    <div class="sop-card glass-card">
+                        <div class="sop-content glass-card card-full-height">
+                            <div class="section-header">
+                                <h3>📊 Control de Analíticas</h3>
+                                <button id="add-analytics-btn" class="premium-add-btn">
+                                    <span class="btn-icon">📈</span>
+                                    <span class="btn-text">Nuevo Registro</span>
+                                </button>
+                            </div>
+
+                            <!-- Analytics Dashboard -->
+                            <div class="analytics-dashboard">
+                                <div class="analytics-segment" id="segment-weight">
+                                    <h4 class="segment-title">⚖️ Evolución del Peso</h4>
+                                    <div class="chart-container glass-card">
+                                        <div class="svg-chart-wrapper">
+                                            <svg id="weight-chart" viewBox="0 0 600 300"></svg>
+                                            <div id="chart-tooltip" class="chart-tooltip hidden"></div>
+                                        </div>
+                                        <div class="chart-legend" id="chart-legend"></div>
+                                    </div>
+                                </div>
+
+                                <div class="analytics-row-grid">
+                                    <div class="analytics-segment" id="segment-cycle">
+                                        <h4 class="segment-title">🩸 Control de Ciclo</h4>
+                                        <div class="stat-card glass-card" id="cycle-status-card">
+                                            <div class="stat-content">
+                                                <div class="phase-indicator" id="current-phase-val">Cargando...</div>
+                                                <p id="next-period-val">--</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="analytics-segment" id="segment-hormones">
+                                        <h4 class="segment-title">🧪 Análisis Hormonal</h4>
+                                        <div class="stat-card glass-card" id="hormone-status-card">
+                                            <div class="stat-content" id="hormone-summary-content">
+                                                <p>Sin datos recientes</p>
+                                            </div>
+                                            <div class="svg-chart-wrapper hormone-wrapper" style="margin-top: 15px;">
+                                                <svg id="hormone-chart" viewBox="0 0 600 200"></svg>
+                                                <div id="hormone-chart-tooltip" class="chart-tooltip hidden"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sop-content glass-card" style="margin-top: 20px;">
+                            <div class="section-header">
+                                <h3>📜 Historial de Salud</h3>
+                            </div>
+                            <div class="health-history-container">
+                                <table id="health-history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Peso</th>
+                                            <th>Hormonas (LH/E2/P)</th>
+                                            <th>Periodo</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="health-history-body">
+                                        <!-- Rows generated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EXPENSES VIEW -->
+            <div id="expenses-view" class="view-container hidden">
+                <div class="expenses-grid">
+                    <div class="expense-entry-card glass-card">
+                        <h3>🪙 Nuevo Gasto</h3>
+                        <form id="expense-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Concepto</label>
+                                    <input type="text" id="expense-desc" placeholder="Ej: Supermercado" required>
+                                </div>
+                                <div class="form-group" style="width: 120px;">
+                                    <label>Importe (€)</label>
+                                    <input type="number" id="expense-amount" step="0.01" placeholder="0.00" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label style="display: flex; justify-content: space-between; align-items: center;">
+                                        Categoría
+                                        <button type="button" id="manage-categories-btn" class="mini-icon-btn"
+                                            title="Gestionar Categorías">⚙️</button>
+                                    </label>
+                                    <div class="select-wrapper">
+                                        <select id="expense-category">
+                                            <!-- Categories populated by JS -->
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Fecha</label>
+                                    <input type="date" id="expense-date" required>
+                                </div>
+                            </div>
+                            <!-- ... -->
+                            <div class="form-row">
+                                <div class="form-group" style="flex: 1;">
+                                    <label>Método de Pago</label>
+                                    <div class="radio-pill-group">
+                                        <input type="radio" name="payment-method" id="pay-card" value="tarjeta" checked>
+                                        <label for="pay-card">💳 Tarjeta</label>
+                                        <input type="radio" name="payment-method" id="pay-cash" value="efectivo">
+                                        <label for="pay-cash">💵 Efectivo</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="premium-add-btn"
+                                style="width: 100%; justify-content: center; margin-top: 10px;">
+                                <span class="btn-icon">➕</span> Añadir Gasto
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="expense-stats-card glass-card">
+                        <h3>📈 Resumen Mensual</h3>
+                        <div class="expense-stats-summary">
+                            <div class="stat-mini">
+                                <span class="stat-label">Total Mes</span>
+                                <span class="stat-value" id="month-total">0.00€</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-label">Categoría Top</span>
+                                <span class="stat-value" id="top-category">--</span>
+                            </div>
+                        </div>
+                        <div class="expense-charts-grid">
+                            <div class="chart-box">
+                                <p class="chart-title">Categorías</p>
+                                <div class="expense-pie-container">
+                                    <svg id="expense-pie-chart" viewBox="0 0 200 200"></svg>
+                                    <div id="expense-pie-tooltip" class="chart-tooltip hidden"></div>
+                                </div>
+                                <div id="expense-pie-legend" class="pie-legend"></div>
+                            </div>
+                            <div class="chart-box">
+                                <p class="chart-title">Método de Pago</p>
+                                <div class="expense-pie-container">
+                                    <svg id="payment-pie-chart" viewBox="0 0 200 200"></svg>
+                                    <div id="payment-pie-tooltip" class="chart-tooltip hidden"></div>
+                                </div>
+                                <div id="payment-pie-legend" class="pie-legend"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="expense-list-card glass-card">
+                        <div class="section-header">
+                            <h3>📜 Historial de Gastos</h3>
+                            <div class="filter-group">
+                                <div class="select-wrapper mini">
+                                    <select id="expense-filter-month">
+                                        <!-- Months will be populated by JS -->
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="expense-table-container">
+                            <table id="expense-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Categoría</th>
+                                        <th>Concepto</th>
+                                        <th>Método</th>
+                                        <th>Importe</th>
+                                        <th style="width: 100px;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expense-list-body">
+                                    <!-- Table rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD VIEW -->
+            <div id="dashboard-view" class="view-container">
+                <div class="dashboard-grid">
+                    <!-- Left Column: Calendar & Actions -->
+                    <div class="left-col">
+                        <div class="calendar-widget">
+                            <div class="month-header">
+                                <button id="prev-month" class="icon-btn" title="Mes Anterior">‹</button>
+                                <h2 id="current-month-label">Enero 2026</h2>
+                                <button id="next-month" class="icon-btn" title="Mes Siguiente">›</button>
+                            </div>
+                            <div class="compact-calendar-grid" id="calendar-grid">
+                                <!-- Generated by JS -->
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Right Column: Brainstorming & Pomodoro -->
+                    <div class="right-col">
+                        <div class="notes-section glass-card" style="height: auto; margin-bottom: 20px; padding: 20px;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h2 style="margin: 0;">💡 Lluvia de Ideas</h2>
+                                <button id="add-note-btn" class="switch-btn"
+                                    style="font-size: 0.8rem; background: var(--accent-color); color: white;">+
+                                    Nota</button>
+                            </div>
+                            <div id="notes-list-container" class="notes-list">
+                                <!-- Notes list generated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Pomodoro Section -->
+                        <div class="pomodoro-section glass-card">
+                            <div class="pomodoro-tomato" id="pomodoro-container">
+                                <div class="tomato-leaf"></div>
+                                <div class="timer-display" id="pomodoro-timer">25:00</div>
+                                <div class="timer-label" id="pomodoro-label">ENFOQUE</div>
+                            </div>
+                            <div class="pomodoro-controls">
+                                <button id="pomodoro-start" class="pomo-btn start">INICIAR</button>
+                                <button id="pomodoro-pause" class="pomo-btn pause hidden">PAUSA</button>
+                                <button id="pomodoro-reset" class="pomo-btn reset">REINICIAR</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WEEKLY VIEW -->
+            <div id="weekly-view" class="view-container week-view-container">
+                <div class="week-header">
+                    <button id="prev-week" class="icon-btn" title="Semana Anterior">‹</button>
+                    <h2 id="current-week-label">Semana Actual</h2>
+                    <button id="next-week" class="icon-btn" title="Semana Siguiente">›</button>
+                </div>
+
+                <div class="switch-view-container">
+                    <button id="view-blocks-btn" class="switch-btn active">Bloques</button>
+                    <button id="view-hourly-btn" class="switch-btn">Horario (8-21)</button>
+                </div>
+
+                <div class="week-grid" id="week-grid">
+                    <!-- Generated by JS (Blocks) -->
+                </div>
+
+                <div class="hourly-grid hidden" id="hourly-grid">
+                    <!-- Generated by JS (Hourly) -->
+                </div>
+
+                <!-- Action Buttons & Progress (Moved here) -->
+                <div
+                    style="margin-top: 25px; display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap;">
+                    <div id="weekly-progress-section" class="progress-section"
+                        style="display: none; flex-grow: 1; margin: 0; max-width: 400px;">
+                        <div class="progress-info">
+                            <span>Progreso Tareas</span>
+                            <span id="progress-percentage">0%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div id="progress-fill" class="progress-fill"></div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button id="add-task-btn" class="switch-btn"
+                            style="background: var(--type-personal); color: white;">+ Tarea</button>
+                        <button id="add-event-btn" class="switch-btn"
+                            style="background: var(--accent-color); color: white;">+ Evento</button>
+                    </div>
+                </div>
+
+                <!-- Habits Section (Bottom) -->
+                <div class="habits-section"
+                    style="margin-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 25px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="margin: 0;">Rastreador de Hábitos Semanal</h3>
+                        <button id="manage-habits-btn" class="switch-btn"
+                            style="font-size: 0.8rem; background: var(--accent-color); color: white;">+
+                            Gestionar</button>
+                    </div>
+                    <div id="habits-table-container" class="habits-table-wrapper">
+                        <!-- Table generated by JS -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for New Event -->
+    <div id="event-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modal-title-text">Nuevo Evento</h2>
+            <form id="event-form">
+                <input type="hidden" id="event-id">
+                <input type="hidden" id="event-is-task" value="false">
+                <div class="form-group">
+                    <label for="event-title">Título</label>
+                    <input type="text" id="event-title" required placeholder="Ej: Examen">
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="event-type" value="personal" checked> Personal
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="event-type" value="university"> Universidad
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-date">Fecha</label>
+                    <input type="date" id="event-date" required>
+                </div>
+
+                <div class="form-group" style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <label for="event-time">Hora Inicio</label>
+                        <input type="time" id="event-time">
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="event-time-end">Hora Fin</label>
+                        <input type="time" id="event-time-end">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-color">🎨 Color de la actividad</label>
+                    <input type="color" id="event-color" value="#667eea"
+                        style="width: 100%; height: 40px; cursor: pointer; border: none; background: none; padding: 0;">
+                </div>
+
+                <div class="form-group"
+                    style="background: rgba(102, 126, 234, 0.1); padding: 10px; border-radius: 8px;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin: 0;">
+                        <input type="checkbox" id="event-recurring">
+                        <span>Fijo Semanal (Clases/Actividades)</span>
+                    </label>
+
+                    <div id="recurring-options" class="hidden"
+                        style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(0,0,0,0.1);">
+                    </div>
+
+                    <small style="display: block; margin-top: 5px; color: #666; font-size: 0.8rem;">
+                        Solo visible en Vista Horaria. Se repetirá cada semana en este día y hora.
+                    </small>
+                </div>
+
+                <div class="action-buttons" style="display: flex; gap: 10px;">
+                    <button type="button" id="delete-btn" class="submit-btn hidden"
+                        style="background: #e53e3e;">Eliminar</button>
+                    <button type="submit" class="submit-btn">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Habits Management -->
+    <div id="habit-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-habit-modal"
+                style="position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #a0aec0;">&times;</span>
+            <h2 id="habit-modal-title">Nuevo Hábito</h2>
+            <form id="habit-form" style="margin-top: 20px;">
+                <input type="hidden" id="habit-id">
+                <div class="form-group">
+                    <label for="habit-name">Nombre del Hábito</label>
+                    <input type="text" id="habit-name" required placeholder="Ej: Leer 30 min">
+                </div>
+                <div class="form-group">
+                    <label for="habit-goal">Meta Semanal (días)</label>
+                    <select id="habit-goal" class="habit-select"
+                        style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e0;">
+                        <option value="1">1 día</option>
+                        <option value="2">2 días</option>
+                        <option value="3">3 días</option>
+                        <option value="4">4 días</option>
+                        <option value="5">5 días</option>
+                        <option value="6">6 días</option>
+                        <option value="7">Diariamente</option>
+                    </select>
+                </div>
+                <div class="action-buttons" style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" id="delete-habit-btn" class="submit-btn hidden"
+                        style="background: #e53e3e;">Eliminar</button>
+                    <button type="submit" class="submit-btn">Guardar</button>
+                </div>
+            </form>
+
+            <div id="habit-list-preview" style="margin-top: 25px; border-top: 1px solid #eee; padding-top: 15px;">
+                <h4 style="margin-bottom: 10px; font-size: 0.9rem; color: var(--text-light);">Tus Hábitos Actuales:</h4>
+                <div id="habits-manage-list" style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- List for editing -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal for Notes -->
+    <div id="note-modal" class="modal hidden">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close-note-modal"
+                style="position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #a0aec0;">&times;</span>
+            <h2 id="note-modal-title">Nueva Nota</h2>
+            <form id="note-form" style="margin-top: 20px;">
+                <input type="hidden" id="note-id">
+                <div class="form-group">
+                    <label for="note-title">Título de la Idea</label>
+                    <input type="text" id="note-title" required placeholder="Ej: Proyecto de verano">
+                </div>
+                <div class="form-group">
+                    <label for="note-content">Desarrollo de la Idea</label>
+                    <textarea id="note-content" required placeholder="Escribe aquí todos los detalles..."
+                        style="width: 100%; height: 250px; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e0; font-family: inherit; resize: vertical;"></textarea>
+                </div>
+                <div class="action-buttons" style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" id="delete-note-btn" class="submit-btn hidden"
+                        style="background: #e53e3e;">Eliminar</button>
+                    <button type="submit" class="submit-btn">Guardar Nota</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="recipe-modal" class="modal hidden">
+        <div class="modal-content glass-card wide-modal">
+            <div class="modal-header">
+                <h2 id="recipe-modal-title">Nueva Receta</h2>
+                <span class="close-recipe-modal">&times;</span>
+            </div>
+            <form id="recipe-form">
+                <input type="hidden" id="recipe-id">
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label>Imagen de la Receta</label>
+                    <div class="recipe-photo-upload" id="photo-upload-container">
+                        <input type="file" id="recipe-photo-input" accept="image/*" hidden>
+                        <div id="photo-preview-placeholder" class="photo-placeholder">
+                            <span>📷 Click para añadir foto</span>
+                        </div>
+                        <img id="recipe-photo-preview" class="photo-preview hidden" src="">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="recipe-name">Nombre de la Receta</label>
+                    <input type="text" id="recipe-name" placeholder="Ej: Bowl de Quinoa y Pollo" required>
+                </div>
+
+                <div class="recipe-dual-grid">
+                    <div class="form-group">
+                        <label>🥗 Ingredientes</label>
+                        <div id="ingredients-list" class="dynamic-list-container"></div>
+                        <div class="input-group-inline">
+                            <input type="text" id="new-ingredient" placeholder="Ej: 200g Pollo">
+                            <button type="button" id="add-ingredient-btn" class="add-item-btn">+</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>📝 Pasos</label>
+                        <div id="steps-list" class="dynamic-list-container"></div>
+                        <div class="input-group-inline">
+                            <input type="text" id="new-step" placeholder="Ej: Cocer la quinoa">
+                            <button type="button" id="add-step-btn" class="add-item-btn">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nutrition-grid-inputs">
+                    <div style="grid-column: 1 / -1; margin-bottom: 10px;">
+                        <button type="button" id="auto-calc-btn" class="submit-btn"
+                            style="background: var(--type-personal); font-size: 0.85rem; padding: 8px;">✨ Auto-calcular
+                            Macros</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipe-protein">Proteínas (g)</label>
+                        <input type="number" id="recipe-protein" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipe-carbs">Carbohidratos (g)</label>
+                        <input type="number" id="recipe-carbs" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipe-fats">Grasas (g)</label>
+                        <input type="number" id="recipe-fats" value="0" min="0">
+                    </div>
+                </div>
+
+                <div class="modal-footer" style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" id="delete-recipe-btn" class="delete-btn-glass hidden">Eliminar</button>
+                    <button type="submit" class="submit-btn">Guardar Receta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ANALYTICS MODAL -->
+    <div id="analytics-modal" class="modal hidden">
+        <div class="modal-content wide-modal">
+            <div class="modal-header">
+                <h2 id="analytics-modal-title">Nuevo Registro de Salud</h2>
+                <span class="close-recipe-modal" id="close-analytics-modal">&times;</span>
+            </div>
+            <form id="analytics-form">
+                <input type="hidden" id="health-record-id">
+                <div class="recipe-dual-grid">
+                    <div class="form-group">
+                        <label>🗓️ Fecha</label>
+                        <input type="date" id="health-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>⚖️ Peso (kg)</label>
+                        <input type="number" id="health-weight" step="0.1" placeholder="Ej: 65.5">
+                    </div>
+                </div>
+
+                <div class="section-title" style="margin: 20px 0 10px; font-weight: 700; color: var(--type-personal);">
+                    🧪 Hormonas</div>
+                <div class="nutrition-grid-inputs">
+                    <div class="form-group">
+                        <label>LH (mUI/ml)</label>
+                        <input type="number" id="health-lh" step="0.01" placeholder="Ej: 8.5">
+                    </div>
+                    <div class="form-group">
+                        <label>Estrógeno (pg/ml)</label>
+                        <input type="number" id="health-estrogen" step="1" placeholder="Ej: 150">
+                    </div>
+                    <div class="form-group">
+                        <label>Progesterona (ng/ml)</label>
+                        <input type="number" id="health-progesterone" step="0.1" placeholder="Ej: 1.2">
+                    </div>
+                </div>
+
+                <div class="section-title" style="margin: 20px 0 10px; font-weight: 700; color: #e53e3e;">🩸 Ciclo
+                    Menstrual</div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="health-period-start" style="width: auto;">
+                    <label for="health-period-start" style="margin: 0;">¿Ha empezado tu periodo hoy?</label>
+                </div>
+
+                <div class="modal-footer" style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="submit-btn" style="flex: 1;">Guardar Análisis</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CATEGORY MANAGEMENT MODAL -->
+    <div id="expense-edit-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Editar Gasto</h2>
+                <span class="close-recipe-modal" id="close-expense-edit-modal">&times;</span>
+            </div>
+            <form id="expense-edit-form">
+                <input type="hidden" id="edit-modal-expense-index">
+                <div class="form-group">
+                    <label>Concepto</label>
+                    <input type="text" id="edit-expense-desc" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Importe (€)</label>
+                        <input type="number" id="edit-expense-amount" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoría</label>
+                        <div class="select-wrapper">
+                            <select id="edit-expense-category">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Fecha</label>
+                        <input type="date" id="edit-expense-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Método de Pago</label>
+                        <div class="radio-pill-group">
+                            <input type="radio" name="edit-payment-method" id="edit-pay-card" value="tarjeta">
+                            <label for="edit-pay-card">💳 Tarjeta</label>
+                            <input type="radio" name="edit-payment-method" id="edit-pay-cash" value="efectivo">
+                            <label for="edit-pay-cash">💵 Efectivo</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: 20px;">
+                    <button type="submit" class="submit-btn">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CATEGORY MANAGEMENT MODAL -->
+    <div id="category-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Gestionar Categorías</h2>
+                <span class="close-recipe-modal" id="close-category-modal">&times;</span>
+            </div>
+            <div class="category-manager-container">
+                <form id="add-category-form" class="category-add-form">
+                    <input type="hidden" id="edit-category-index" value="">
+                    <div class="form-group">
+                        <label>Nueva Categoría</label>
+                        <div class="input-group-inline">
+                            <input type="text" id="category-name" placeholder="Ej: Viajes" required>
+                            <input type="text" id="category-emoji" placeholder="✈️"
+                                style="width: 50px; text-align: center;">
+                            <input type="color" id="category-color" value="#9f7aea" style="width: 50px;">
+                            <button type="submit" id="category-submit-btn" class="add-item-btn"
+                                title="Guardar">+</button>
+                            <button type="button" id="cancel-category-edit" class="add-item-btn hidden" title="Cancelar"
+                                style="background: var(--text-light)">✕</button>
+                        </div>
+                    </div>
+                </form>
+                <div id="category-list" class="category-management-list">
+                    <!-- Categories listed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

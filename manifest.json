@@ -1,0 +1,21 @@
+{
+  "name": "FocusHub - Agenda Personal",
+  "short_name": "FocusHub",
+  "description": "Tu centro de productividad personal: calendario, hábitos, gastos, recetas y análisis SOP",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f0f23",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "lifestyle", "health"],
+  "lang": "es-ES",
+  "dir": "ltr"
+}
