@@ -2263,3 +2263,9 @@ textarea.notes-area:focus {
     border-radius: 8px;
     margin-bottom: 12px;
 }
+/* Note preview truncation in dashboard */
+.notes-list { display: flex; flex-direction: column; gap: 10px; }
+.notes-list > div { cursor: pointer; padding: 12px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; border-left: 3px solid var(--accent-color); transition: all 0.3s ease; }
+.notes-list > div:hover { background: rgba(255, 255, 255, 0.08); transform: translateX(5px); }
+.notes-list > div h4 { margin: 0 0 8px 0; font-size: 1rem; color: var(--accent-color); }
+.notes-list > div p { margin: 0; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; max-height: 4.2em; }
