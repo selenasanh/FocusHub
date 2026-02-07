@@ -1,9 +1,10 @@
 // FocusHub Service Worker
-const CACHE_NAME = 'focushub-v1';
+const CACHE_NAME = 'focushub-v2';
 const urlsToCache = [
     './',
     './index.html',
     './style.css',
+    './mobile.css',
     './app.js',
     './icon.svg',
     'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&display=swap'
